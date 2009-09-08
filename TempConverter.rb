@@ -1,4 +1,4 @@
-#!/usr/local/bin/ruby -w
+#!/usr/local/bin/ruby1.9 -w
 =begin
   Test Example from class cs177
   Ruby script to covert temp from f to c or c to f

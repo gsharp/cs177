@@ -1,11 +1,8 @@
 #!/usr/local/bin/ruby1.9 -w
 =begin
-  Author: Glen Cuthbertson
-  Email:  dont.spam.g(at)gmail.com
-  Date:   2009.09.04
-  Class: cs177
-  Week: 3
-  Homework: 1
+  Author:   Glen Cuthbertson
+  Email:    dont.spam.g(at)gmail.com
+  Date:     2009.09.04
   this file reports on itself:
     - size of file
     - each unique character used
