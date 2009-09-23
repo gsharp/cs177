@@ -9,8 +9,6 @@
     - count of each character used
     - total count of all characters used (should match size)
     - Least used character(s)
-    - Most used character(s)
-    - Source output
 =end
 
 #Constant with this file name

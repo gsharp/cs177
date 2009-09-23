@@ -1,0 +1,39 @@
+#!/usr/local/bin/ruby1.9 -w
+
+=begin
+  lists lines from file src
+  usage: list.rb {-n} {range} file
+=end
+def usage
+  abort "usage: list {-n} [range#,$,-] file_name"
+end
+
+case ARGV.length
+when 0
+  usage
+when 1
+  $arg = ARGV[0]
+  if $arg == '-n'
+    usage
+  else
+    getfile ($arg)
+  end
+end
+
+def usage
+  abort "usage: list {-n} [range#,$,-] file_name"
+end
+
+
+def getfile (f)
+  if File.file?(f)
+    if File.readable?(f)
+      file_name = File.open(f)
+      file_name.each {|l| puts l}
+    else
+      abort "ooops! #{f} is not readable"
+    end
+  else
+    abort "ooops! #{f} is not a valid file"
+  end
+end

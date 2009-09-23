@@ -1,0 +1,22 @@
+parse_num(from,to,range)
+returns from to based on range
+
+--------------
+$ == last line
+
+for from to
+  ..
+end
+
+setup range array
+
+ra.each {from,to parse_num(range)}
+
+ruby
+---------------
+
+def pase_num(range)
+  from,to = parse_num(range)
+  # dont make from and to global
+end
+

@@ -1,0 +1,136 @@
+#!/usr/local/bin/ruby1.9 -w
+
+=begin
+  lists lines from file src
+  usage: list.rb {-n} {range} file
+=end
+def usage(message = false)
+  puts message if message
+  puts "usage: list [-n] [#,#-#,#-$,-,$] file_name"
+  abort 
+end #usage
+
+def setup
+  argArray = []
+  ARGV.each {|a| argArray.push(a)}
+  puts "argument count:   #{argArray.size}"  
+  usage "no argumens provided?" if argArray.length == 0
+  usage "woah...too many arguments?" if argArray.length > 3
+
+  #set show lines arg
+  showLineNum = argArray[0] == "-n"? true : false;
+  puts "showLineNum is:   #{showLineNum}"
+  argArray.delete_at(0) if showLineNum #done with first array element
+
+  #set the file name or abort
+  fileName,file = tryFile(argArray.last) # will abort if bad file
+  puts "#{fileName} is:    good"
+  argArray.delete_at(argArray.length-1) #done with last array element
+  
+  #check range
+  if argArray.length == 1 #we have a range
+    lineRangeArray = argArray[0].split(",") #convert range to array
+    goodRange,doReadlines,maxLine = tryRange(lineRangeArray) # will abort if bad range
+    puts "ranges are good:  #{goodRange}"
+    
+    theFile = []
+    if doReadlines
+      puts "doing readlines: #{doReadlines}"
+      theFile = file.readlines
+      usage "Readlines error: Range is greater than last line in file: there are only #{theFile.size} lines in the file #{fileName}" if maxLine > theFile.size
+    else
+      puts "doing maxLine:      #{maxLine}"
+      (0...maxLine.to_i).each do |i|
+        usage "Maxline error: Range is greater than last line in file: there are only #{i} lines in the file #{fileName}" if file.eof
+        theFile.push(file.readline)
+      end
+    end
+    lastLine = theFile.size
+    puts "lastLine: #{lastLine}"
+    
+    # if range has a dash, split it and do from-to
+    lineRangeArray.each do |i|
+      case i
+      when /\-/
+        range_arr = i.split('-')
+        if range_arr.length == 2
+          from = (range_arr[0] == "")? 1.to_s : range_arr[0]
+          to = (range_arr[1] == "$")? lastLine : range_arr[1]
+        else
+          from = range_arr[0]
+          to = lastLine
+        end 
+      when /\$/
+        from = lastLine
+        to = lastLine
+      else
+        from = i
+        to = i
+      end
+      puts "from: #{from} to: #{to}"
+      output(from,to,theFile,showLineNum)
+    end
+  else
+    loadWholeFile(file, showLineNum)
+  end
+
+
+end #setup
+
+# loads whole file when no range, or range needs it
+def loadWholeFile(file_a, show_lines = false)
+  file_a.each do |l|
+    outString = (show_lines == true) ? ("#{$.} " + l) : l
+    puts outString
+  end
+end
+
+# aborts is file can't be found or read, returns rile name
+def tryFile(f)
+  if File.file?(f)
+    if File.readable?(f)
+      return f,File.open(f)
+    else # file is not readable
+      usage("ooops! #{f} is not readable")
+    end
+  else # not a file
+    usage("#{f} is not a valid file")
+  end
+end #tryFile
+
+#aborts if there is a bad range, returns true, fullFile, maxRange
+def tryRange(range)
+  fullFile = false
+  maxRange = 0
+  range.each do |i|
+    usage "bogus range for #{i}, aborting..." if i =~ /[^\d\-\$]/ # abort if range has bogus values
+    # figure out if we need the whole file
+    fullFile = true if (i =~ /[\$]/) or (i =~ /[\-]\z/) # if is has a $ or a range ending in -
+    # calculate max range if not fullFile
+    if fullFile != true 
+      i.split('-').each {|r| maxRange = r.to_i if r.to_i > maxRange}
+    end
+  end
+  return true, fullFile, maxRange
+end #tryRange
+
+# bust the output
+def output(_from,_to,file,show_lines = false)
+  if _from.to_i > _to.to_i
+    from = _to.to_i
+    to = _from.to_i
+    reverse = true
+  else
+    from = _from.to_i
+    to = _to.to_i
+    reverse = false
+  end
+  outArray = []
+  (from..to).each do |l|
+    outString = show_lines ? ("#{l} " + "#{file[l-1]}") : file[l-1]
+    outArray.push(outString)
+  end
+  reverse ? (puts outArray.reverse) : (puts outArray)
+end #output
+
+setup
