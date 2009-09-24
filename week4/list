@@ -1,16 +1,21 @@
 #!/usr/local/bin/ruby1.9 -w
+#                 
+# Author:  Glen Cuthbertson
+# Date  :  09/23/09
+# Program Name: list 
+# lists lines from file src
+# Note: This program works only on ruby 1.9 and above.
 
-=begin
-  lists lines from file src
-  usage: list.rb {-n} {range} file
-=end
-
+#*******************************usage()*******************************
+# print optional message, usage, then abort
 def usage(message = false)
   puts message if message
   puts "usage: list [-n] [#,#-#,#-$,-,$] file_name"
   abort 
 end #usage
 
+#*******************************setup()*******************************
+# the main function
 def setup(debug = false)
   argArray = [] # store args in tracking array
   ARGV.each {|a| argArray.push(a)}
@@ -86,10 +91,9 @@ def setup(debug = false)
   else
     loadWholeFile(file, showLineNum) # no range detected so do full file
   end
-
-
 end #setup
 
+#*******************************loadWholeFile()*******************************
 # loads whole file when no range, or range needs it
 def loadWholeFile(file_a, show_lines = false)
   file_a.each do |l|
@@ -98,6 +102,7 @@ def loadWholeFile(file_a, show_lines = false)
   end
 end #loadWholeFile
 
+#*******************************tryFile()*******************************
 # aborts is file can't be found or read, returns rile name
 def tryFile(f)
   if File.file?(f)
@@ -111,6 +116,7 @@ def tryFile(f)
   end
 end #tryFile
 
+#*******************************tryRange()*******************************
 #aborts if there is a bad range, returns true, fullFile, maxRange
 def tryRange(range)
   fullFile = false # default
@@ -127,7 +133,8 @@ def tryRange(range)
   return true, fullFile, maxRange # returns values for further range processing
 end #tryRange
 
-# bust the output
+#*******************************output()*******************************
+# render the output
 def output(_from,_to,file,show_lines = false)
   # setup from..to and handle reverse mappings
   if _from.to_i > _to.to_i
@@ -147,6 +154,8 @@ def output(_from,_to,file,show_lines = false)
   end
   reverse ? (puts outArray.reverse) : (puts outArray)
 end #output
+
+#*********************************************************************
 
 # setup("debug")
 setup
