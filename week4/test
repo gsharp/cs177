@@ -1,9 +1,12 @@
 #!/usr/local/bin/ruby1.9 -w
+#                 
+# Author:  Glen Cuthbertson
+# Date  :  09/23/09
+# Program Name: test 
+# Test Harness: tests arguments for list and runs script showing output for each input in testHash
+# usage: ./test path/to/list script_input
+# Note: This program works only on ruby 1.9 and above.
 
-=begin
-  Test Harness: tests arguments and runs script showing output for each input in testHash
-  usage: ./test script_file script_input
-=end
 abort "usage: ./test script_file script_input" if ARGV.length < 2
 script = "./#{ARGV[0]} "
 puts "############# RUNNING TEST SUITE FOR: #{script} #####################"
