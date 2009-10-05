@@ -1,0 +1,32 @@
+#!/usr/local/bin/ruby1.9 -w
+
+=begin
+ 
+=end
+
+def question
+ puts "what's on your mind?"
+ ask
+end
+
+def ask
+  a = gets.chomp
+  listen(a)
+end
+
+def listen(a)
+  puts "I'm hearing you say: \"#{a}\""
+  puts "is that correct?"
+  confirm = gets.chomp
+  case confirm
+    when "yes","Yes"
+      puts "interesting......."
+      puts "is there anything else on your mind?"
+      ask
+    when "no", "No"
+      puts "thank you that will be a $20 co-pay...see you next week"
+      abort
+  end
+end
+
+question
