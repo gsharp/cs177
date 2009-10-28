@@ -1,0 +1,31 @@
+#!/usr/bin/ksh
+(( $# == 0 )) && { print "usage: mkshell filename"; exit 1; }
+filename=$1
+
+if [ -f "$filename" ]; then
+   print -n "$filename exists, over write (y/n)? "
+   read ans 
+   [ $ans = "n" -o $ans = "N" ] && exit 0
+fi
+
+
+> $filename
+
+d=$(date "+%m/%d/%y")
+finger 2>/dev/null 1>&2 # to see if finger exists or not 
+if (( $? != 0 )); then
+   your_name=${MYNAME:-" put your name here"}
+else
+   your_name=$(finger $(whoami)|grep -i "in real life"|cut -d: -f3)
+fi
+
+print "#!/usr/bin/ksh"                 >> $filename
+print "#                 "             >> $filename
+print "# Author:  $your_name"          >> $filename
+print "# Date  :  $d        "          >> $filename
+print "# Program Name: $filename "     >> $filename
+print "#                         "     >> $filename
+print " "                              >> $filename
+chmod +x $filename
+vi $filename
+

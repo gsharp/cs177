@@ -1,0 +1,75 @@
+#!/usr/bin/ksh
+
+noconfirm="n"  # to be used by the ecr script.
+[ $1 = "-n" ] && noconfirm="y" && shift
+(( $# == 0 )) && { print "usage: mkc++ filename"; exit 1; }
+filename=$1
+
+if [ -f "$filename" ] && [ $noconfirm = "n" ]; then
+   print -n "$filename exists, over write (y/n)? "
+   read ans < /dev/tty
+   [ $ans = "n" -o $ans = "N" ] && exit 0
+fi
+
+a=$(echo "$filename" | grep "\.cpp$")
+if [ -z "$a" ]; then
+   filename="$filename".cpp
+fi
+
+if [ $noconfirm = "y" ]; then
+   chmod +x $filename
+   [ -n "$EDITOR" ] && $EDITOR $filename || vi $filename
+   exit 0
+fi
+   
+> $filename
+
+d=$(date "+%m/%d/%y")
+finger 2>/dev/null 1>&2 # to see if finger exists or not 
+if (( $? != 0 )); then
+   your_name=${MYNAME:-" put your name here"}
+else
+   your_name=$(finger $(whoami)|grep -i "in real life"|cut -d: -f3)
+fi
+
+header1="#include <iostream>"
+header2="#include <iomanip>"
+header3="#include <string>"
+header4="#include <cstdio>"
+header5="#include <cstdlib>"
+header6="#include <cmath>"
+header7="#include <cctype>"
+header8="#include <fstream>"
+header9="#include <cstring>"
+header0="#include <ctime>"
+
+
+using="using namespace std;"
+
+print "$header1"                            >> $filename
+print "$header2"                            >> $filename
+print "$header3"                            >> $filename
+print "$header4"                            >> $filename
+print "$header5"                            >> $filename
+print "$header6"                            >> $filename
+print "$header7"                            >> $filename
+print "$header8"                            >> $filename
+print "$header9"                            >> $filename
+print "$header0"                            >> $filename
+print " "                                   >> $filename
+print "$using "                             >> $filename
+print " "                                   >> $filename
+print "// Author:$your_name"                >> $filename
+print "// Date  : $d         "              >> $filename
+print "// Program Name: $filename "         >> $filename
+print "// Objective:             "          >> $filename
+print "                          "          >> $filename
+print " "                                   >> $filename
+print "int main(int argc, char **argv)"     >> $filename
+print "{"                                   >> $filename
+print "   return(0);             "          >> $filename
+print "}"                                   >> $filename
+
+chmod +x $filename
+[ -n "$EDITOR" ] && $EDITOR $filename || vi $filename
+

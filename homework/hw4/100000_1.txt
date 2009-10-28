@@ -1,0 +1,18 @@
+1) generating ip master list
+  100000 random Ip's written to ip_addresses.txt
+2) generating unique ip's from file ip_addresses.txt
+  there are 99999 UNIQUE Ip's
+3) looking for duplicated ip's
+  1 ip's were duplicated...writing them to a file
+  1 lines written to ip_dupes.txt
+4) reading ip_dupes.txt
+  238.17.62.52 repeated 2 times
+  1 lines read from ip_dupes.txt
+5) replacing ip_addresses.txt with non duplicate IP's
+  99999 lines written to ip_addresses.txt
+6) math validation
+  target list size:                100000
+  Unique Ips:                      99999
+  Duplicated Ip's aggregate total: 1
+  Unique Ip's + Dupped Ip's:       100000
+  validation is: true

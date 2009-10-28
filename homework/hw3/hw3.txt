@@ -1,0 +1,79 @@
+---------hw3 test output----------------
+Glen Cuthbertson
+===================================
+0
+zero
+----------
+1
+one 
+---------
+10
+ten 
+---------
+11
+eleven 
+---------
+19
+nineteen 
+---------
+20
+twenty 
+---------
+25
+twenty-five 
+---------
+77
+seventy-seven 
+---------
+90
+ninety 
+---------
+100
+one hundred 
+---------
+10,000,000,001
+ten billion one 
+---------
+1,234,567,890
+one billion two hundred thirty-four million five hundred sixty-seven thousand eight hundred ninety 
+---------
+999,000,000,001
+nine hundred ninety-nine billion one 
+---------
+-------random tests--------
+7
+seven 
+---------
+49
+fourty-nine 
+---------
+556
+five hundred fifty-six 
+---------
+7,347
+seven thousand three hundred fourty-seven 
+---------
+67,888
+sixty-seven thousand eight hundred eitghty-eight 
+---------
+528,547
+five hundred twenty-eight thousand five hundred fourty-seven 
+---------
+9,268,776
+nine million two hundred sixty-eight thousand seven hundred seventy-six 
+---------
+81,147,131
+eitghty-one million one hundred fourty-seven thousand one hundred thirty-one 
+---------
+871,838,325
+eight hundred seventy-one million eight hundred thirty-eight thousand three hundred twenty-five 
+---------
+8,556,862,991
+eight billion five hundred fifty-six million eight hundred sixty-two thousand nine hundred ninety-one 
+---------
+48,211,169,716
+fourty-eight billion two hundred eleven million one hundred sixty-nine thousand seven hundred sixteen 
+---------
+596,655,942,426
+five hundred ninety-six billion six hundred fifty-five million nine hundred fourty-two thousand four hundred twenty-six 
+---------

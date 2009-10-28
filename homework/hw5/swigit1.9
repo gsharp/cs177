@@ -1,0 +1,5 @@
+#does a swig build and compile
+swig -ruby cs177.i
+gcc -fpic  -c cs177.c cs177_wrap.c -I. -I/usr/local/lib/ruby/1.8/i686-darwin10.0.0 
+cc -dynamic -bundle -undefined suppress -flat_namespace -o cs177.bundle cs177.o cs177_wrap.o -L. -L/usr/local/lib -L.  -lpthread -ldl -lobjc
+sudo /usr/bin/install -c -m 0755 cs177.bundle /usr/local/lib/ruby1.9/site_ruby/1.9.1/i386-darwin10.0.0

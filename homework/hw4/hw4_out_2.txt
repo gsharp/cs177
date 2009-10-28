@@ -1,0 +1,6 @@
+1) generating ip master list
+  20000 random Ip's written to ip_addresses.txt
+2) generating unique ip's from file ip_addresses.txt
+  there are 20000 UNIQUE Ip's
+3) looking for duplicated ip's
+no dupes found

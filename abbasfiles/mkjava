@@ -1,0 +1,197 @@
+#!/bin/ksh
+# Author: Abbas Moghtanei
+# Date  : 5/30/03
+# Modified: 7/21/07, 7/26/07, 3/8/08
+# Syntax: mkjava <-a><-c><-p><-v><-n><-h><-s> filename <java code>
+# 
+# This program creates a java program/applet and call jcr to compile and
+# run it (if -c is used).
+# -v means verbose, -a means create applet, -p means copy the created
+# -n means do not invoke the text editor, -hflag displays help.
+# -s means create standalone graphics program.
+# applet and the html file to the public_html directory. If this directory
+# does not exist, it will be created.
+#   
+u="usage: $(basename $0) <-a><-v><-c><-p><-n><-h><-s> filename <java code>"
+aflag=0; cflag=0; pflag=0; vflag=0; nflag=0; hflag=0; sflag=0
+TEXT_EDITOR=${EDITOR:- "vi"}
+
+##################################help()#################################
+help()
+{
+   print " "
+   print -- "-a:  create applet"
+   print -- "-c:  compile and run the java program/applet"
+   print -- "-h:  display this help"
+   print -- "-n:  do not invoke the text editor"
+   print -- "-p:  copy the class and html files to the public_html directory."
+   print "     If public_html does not exist, it will be created."
+   print -- "-s:  create standalone graphics program"
+   print -- "-v:  verbose"
+   print " "
+   exit 0
+}
+
+(( $# == 0 )) && { print $u; exit 1; }
+while getopts "avcpnhs" option
+do
+  case $option in
+   "a" )    aflag=1;;
+   "c" )    cflag=1;;
+   "h" )    hflag=1;;
+   "n" )    nflag=1;;
+   "p" )    pflag=1;;
+   "s" )    sflag=1;;
+   "v" )    vflag=1;;
+    \? )    print $u; exit 1;;
+  esac
+done
+
+shift $(( OPTIND - 1 ))
+
+(( $hflag == 1 )) && help
+(( $# == 0 )) && { print "filename is missing"; exit 1; }
+filename=$1
+shift
+rest="$@"
+x=$(echo $filename | grep "\.java$")
+[[ -z $x || $x = ".java" ]] && { print "Invalid java filename"; exit 3; }
+fname=$(echo $filename | sed "s/\.java$//")
+if [ -f "$filename" ]; then
+   print -n "$filename exists, over write (y/n)? "
+   read ans 
+   [ $ans = "n" -o $ans = "N" ] && exit 0
+fi
+> $filename
+d=$(date "+%m/%d/%y")
+finger 2>/dev/null 1>&2 # to see if finger exists or not 
+if (( $? != 0 )); then
+   your_name=${MYNAME:-" put your name here"}
+else
+   your_name=$(finger $(whoami)|grep -i "in real life"|cut -d: -f3)
+fi
+
+if (( $aflag == 1 )); then
+   (( $vflag == 1 )) && print "making the $filename applet" 
+   print "/*"                                >> $filename
+   print " "                                 >> $filename
+   print " Author: $your_name"               >> $filename
+   print " Date  : $d"                       >> $filename
+   print " Program Name: $filename"          >> $filename
+   print " "                                 >> $filename
+   print "*/"                                >> $filename
+   print " "                                 >> $filename
+   print "import java.awt.*;"                >> $filename
+   print "import java.awt.event.*;"          >> $filename
+   print "import java.applet.*;"             >> $filename
+   print " "                                 >> $filename
+   g="//<applet code=\"$fname\" align=middle width=500 height=400>"
+   print "$g"                                >> $filename
+   print "//</applet>"                       >> $filename
+   print " "                                 >> $filename
+   print "public class $fname extends Applet">> $filename 
+   print "{"                                 >> $filename
+   print "    public void init()"            >> $filename
+   print "    {"                             >> $filename
+   if [ -n "$rest" ]; then
+      str=""
+      for code in "$rest"; do
+          str=$str$code
+      done
+
+      IFS=";"
+      set -- $str
+     
+      for code in "$@"; do    
+          print "     $code;"                >> $filename
+      done 
+   fi
+   print "    // put your code here"         >> $filename
+   print "    }"                             >> $filename
+   print "    public void paint(Graphics g)" >> $filename
+   print "    {"                             >> $filename
+   print "    // put your code here"         >> $filename
+   print "    }"                             >> $filename
+   print "}"                                 >> $filename
+elif (( $sflag == 1 )); then
+   (( $vflag == 1 )) && print "making the $filename standalone program" 
+   print "/*"                                >> $filename
+   print " "                                 >> $filename
+   print " Author: $your_name"               >> $filename
+   print " Date  : $d"                       >> $filename
+   print " Program Name: $filename"          >> $filename
+   print " "                                 >> $filename
+   print "*/"                                >> $filename
+   print " "                                 >> $filename
+   print "import java.awt.*;"                >> $filename
+   print "import java.awt.event.*;"          >> $filename
+   print "import java.applet.*;"             >> $filename
+   print "import javax.swing.*;"             >> $filename
+   print " "                                 >> $filename
+   print "public class $fname extends JFrame">> $filename 
+   print "{"                                 >> $filename
+   print "    public $fname()"               >> $filename
+   print "    {"                               >> $filename
+   print "       setTitle(\"My Frame\");"      >> $filename
+   print "       setSize(500, 400);"           >> $filename
+   print "       setVisible(true);"            >> $filename
+   print "       setLayout(new FlowLayout());" >> $filename
+   print "    }"                               >> $filename
+  
+   print "    public static void main(String args[])" >> $filename
+   print "    {"                             >> $filename
+   print "        $fname f = new $fname();"  >> $filename
+   print "        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);">>$filename
+   print "    // put your code here"         >> $filename
+   print "    }"                             >> $filename
+   print "}"                                 >> $filename
+else
+   (( $vflag == 1 )) && print "making the $filename program" 
+   print "/*"                                        >> $filename
+   print " "                                         >> $filename
+   print " Author: $your_name "                      >> $filename
+   print " Date  : $d"                               >> $filename
+   print " Program Name: $filename"                  >> $filename
+   print " "                                         >> $filename
+   print "*/"                                        >> $filename
+   print " "                                         >> $filename
+   print "//import java.awt.*;"                      >> $filename
+   print "//import java.applet.*;"                   >> $filename
+   print "//import java.util.*;"                     >> $filename
+   print "//import java.io.*;"                       >> $filename
+   print "//import javax.swing.*;"                   >> $filename
+   print " "                                         >> $filename
+   print "class $fname"                              >> $filename  
+   print "{"                                         >> $filename
+   print "   public static void main(String args[])" >> $filename
+   print "   {"                                      >> $filename
+   print "   "                                       >> $filename
+   if [ -n "$rest" ]; then
+      str=""
+      for code in "$rest"; do
+          str=$str$code
+      done
+
+      IFS=";"
+      set -- $str
+     
+      for code in "$@"; do
+          print "     $code;"                        >> $filename
+      done 
+   fi
+   print "     // put your code here"                >> $filename
+   print "   }"                                      >> $filename
+   print "}"                                         >> $filename
+fi
+
+if (( $nflag == 0 )); then
+  (( $vflag == 1 )) && print "invoking the text editor"
+  [ -n "$EDITOR" ] && $EDITOR $filename || $TEXT_EDITOR $filename
+fi
+if (( $cflag == 1 )); then
+   [ ! -f "jcr" ] && { print "can not find the jcr program"; exit 1; }  
+   (( $vflag == 1 )) && { vf="-v"; print "invoking jcr"; }
+   (( $pflag == 1 )) &&  pf="-p"
+   jcr $pf $vf $filename
+fi
+          

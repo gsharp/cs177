@@ -1,0 +1,3 @@
+# swig file cleaner / reset
+rm *.o *wrap* *.bundle
+sudo rm /usr/local/lib/ruby/site_ruby/1.8/i686-darwin10.0.0/cs177.bundle

@@ -1,0 +1,40 @@
+#!/usr/bin/ksh
+(( $# == 0 )) && { print "usage: mkruby filename"; exit 1; }
+filename=$1
+
+a=$(echo "$filename" | grep "\.rb$")
+if [ -z "$a" ]; then
+   filename="$filename".rb
+fi
+
+if [ -f "$filename" ]; then
+   print -n "$filename exists, over write (y/n)? "
+   read ans 
+   [ $ans = "n" -o $ans = "N" ] && exit 0
+fi
+
+
+> $filename
+
+d=$(date "+%m/%d/%y")
+finger 2>/dev/null 1>&2 # to see if finger exists or not 
+if (( $? != 0 )); then
+   your_name=${MYNAME:-" put your name here"}
+else
+   your_name=$(finger $(whoami)|grep -i "in real life"|cut -d: -f3)
+fi
+os=$(uname -s)
+n=$(echo "$os" | grep -i "CYGWIN")
+[ -n "$n" ] && shibang="#!/usr/bin/ruby -w" || shibang="#!/usr/bin/env ruby"
+
+print "$shibang"                       >> $filename
+print "#                 "             >> $filename
+print "# Author:  $your_name"          >> $filename
+print "# Date  :  $d        "          >> $filename
+print "# Program Name: $filename "     >> $filename
+print "#                         "     >> $filename
+print " "                              >> $filename
+chmod +x $filename
+vi $filename
+
+
