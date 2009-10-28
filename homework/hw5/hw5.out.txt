@@ -1,45 +1,37 @@
 Ruby Test Driver for cs177.c
-the following functions will be run:
-  1) Cs177.strsuffix("test_string_reference","_suffix_")
-  2) Cs177.strdel("test_string_reference","string")
-  3) Cs177.strprefix("test_string_reference","_prefix_")
-  4) Cs177.strrpt("test_string_reference",10)
-  5) Cs177.strsub("test_string_reference",5,6)
-  6) Cs177.strrtrim(" test_string_reference ")
-  7) Cs177.strltrim(" test_string_reference ")
 
 1) char *strsuffix(char *s, char *t);
 
-  input  :   Cs177.strsuffix("test_string_reference","_suffix_")
+  input  : Cs177.strsuffix("test_string_reference","_suffix_")
   output : "test_string_reference_suffix_"
 
 2) char *strdel(char *s, char *t);
 
-  input  :   Cs177.strdel("test_string_reference","string")
+  input  : Cs177.strdel("test_string_reference","string")
   output : "test__reference"
 
 3) char *strprefix(char *s, char *t);
 
-  input  :   Cs177.strprefix("test_string_reference","_prefix_")
+  input  : Cs177.strprefix("test_string_reference","_prefix_")
   output : "_prefix_test_string_reference"
 
 4) char *strrpt(char *s, int n);
 
-  input  :   Cs177.strrpt("test_string_reference",10)
+  input  : Cs177.strrpt("test_string_reference",10)
   output : "test_string_referencetest_string_referencetest_string_referencetest_string_referencetest_string_referencetest_string_referencetest_string_referencetest_string_referencetest_string_referencetest_string_reference"
 
 5) char *strsub(char *s, int loc, int len);
 
-  input  :   Cs177.strsub("test_string_reference",5,6)
+  input  : Cs177.strsub("test_string_reference",5,6)
   output : "string"
 
 6) char *strrtrim(char *s);
 
-  input  :   Cs177.strrtrim(" test_string_reference ")
+  input  : Cs177.strrtrim(" test_string_reference ")
   output : " test_string_reference"
 
 7) char *strltrim(char *s);
 
-  input  :   Cs177.strltrim(" test_string_reference ")
+  input  : Cs177.strltrim(" test_string_reference ")
   output : "test_string_reference "
 
