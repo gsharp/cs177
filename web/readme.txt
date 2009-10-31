@@ -7,5 +7,5 @@
 Enjoy!
 
 if you want to change the port modify the server script
-you can kill it with crtl-d
+you can kill it with crtl-c
 
