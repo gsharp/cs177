@@ -1,0 +1,10 @@
+#!/usr/local/bin/ruby1.9 -w
+require 'webrick'
+include WEBrick
+
+s = HTTPServer.new(
+	:Port => 1138,
+	:DocumentRoot => File.join(Dir.pwd, "/content")
+	)
+trap("INT") {s.shutdown}
+s.start
