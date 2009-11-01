@@ -6,5 +6,25 @@ s = HTTPServer.new(
 	:Port => 1138,
 	:DocumentRoot => File.join(Dir.pwd, "/content")
 	)
+	
+	
+class HelloServlet < HTTPServlet::AbstractServlet
+ def do_GET(req, res)
+   res['Content-Type'] = "text/html"
+   res.body = %{<html>
+  <head>
+   <title>Hello Servlet</title>
+  </head>
+  <body>
+    <h1>Hello!</h1> 
+    <p><b>You're calling from a:</b> <i>#{req['User-Agent']}</i></p>
+    <p><b>I see parameters:</b><i> #{req.query.keys.join(', ')}</i></p>
+  </body>
+</html>
+   }
+ end
+end
+s.mount("/hello", HelloServlet)
 trap("INT") {s.shutdown}
+puts "starting: http://localhost:1138/hello?foo&bar"
 s.start
