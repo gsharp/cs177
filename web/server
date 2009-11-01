@@ -1,4 +1,12 @@
 #!/usr/local/bin/ruby1.9 -w
+# 
+#  server
+#  web
+#  
+#  Created by GlenC on 2009-10-31.
+#  Copyright 2009 glenc.com. All rights reserved.
+# 
+
 require 'webrick'
 include WEBrick
 
