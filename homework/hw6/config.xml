@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+	Configuration script for daemon
+	Created by Glen Cuthbertson on 2009-11-04.
+	Copyright (c) 2009 glenc.com All rights reserved.
+-->
+
+<configs>
+	<key firstname="Glen"/>
+	<key lastname="Cuthbertson"/>
+	<key occupation="Developer"/>
+	<key dob="10/20/70"/>
+	<key watching="Wheeler Dealers"/>
+	<key physique="out of shape"/>
+</configs>
