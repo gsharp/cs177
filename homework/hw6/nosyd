@@ -24,7 +24,7 @@ def read conf
 end
 
 def parse line
-  if line.rindex('#') != 0 && line.rindex('=') > 0
+  if line.strip.rindex('#') != 0 && line.rindex('=') > 0
     comment,esc = false,false
     output = ""
     line.chomp.each_byte do |b|
