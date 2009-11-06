@@ -1,0 +1,44 @@
+#!/usr/local/bin/ruby1.9 -w
+# 
+#  nosyd
+#  homework 6
+#  
+#  Created by Glen Cuthbertson on 2009-11-06.
+#  Copyright 2009 GLENC.COM. All rights reserved.
+# 
+
+STDIN.reopen("/dev/null")
+#STDOUT.reopen("/dev/null","w")
+STDERR.reopen("/dev/null","w")
+
+def go
+  confExt = '.conf'
+  config = File.basename($0)+confExt
+  read config
+end
+
+def read conf
+  $configHash = {}
+  File.readlines(conf).each {|line| parse line}
+  $configHash.each {|k,v| puts "#{k} => #{v}"}
+end
+
+def parse line
+  if line.rindex('#') != 0 && line.rindex('=') > 0
+    comment,esc = false,false
+    output = ""
+    line.chomp.each_byte do |b|
+      case b.chr
+        when '\'','\"'
+          esc ? esc = false : esc = true
+        when '#'
+          comment = true if esc == false
+      end 
+      output += b.chr if comment == false
+    end
+    lineArr = output.split('=')
+    $configHash[lineArr[0].strip] = lineArr[1].strip.tr_s('\'','')
+  end
+end
+
+go
