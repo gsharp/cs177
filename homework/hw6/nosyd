@@ -7,20 +7,48 @@
 #  Copyright 2009 GLENC.COM. All rights reserved.
 # 
 
-STDIN.reopen("/dev/null")
-#STDOUT.reopen("/dev/null","w")
-STDERR.reopen("/dev/null","w")
 
-def go
-  confExt = '.conf'
-  config = File.basename($0)+confExt
-  read config
+#STDIN.reopen("/dev/null")
+#STDOUT.reopen("/dev/null","w")
+#STDERR.reopen("/dev/null","w")
+
+$logName = File.basename($0)+'.log'
+$logFile = File.new($logName,"a")
+$run = true
+$configHash = {}
+$debug = true
+
+def defineSigs
+  Signal.trap("INT")  {clearLog}
+  Signal.trap("HUP")  {readConf true}
+  Signal.trap("QUIT") {die}
+  Signal.trap("USR1") {writeSecret}
+  Signal.trap("USR2") {$debug ? $debug = false : $debug = true}
 end
 
-def read conf
-  $configHash = {}
-  File.readlines(conf).each {|line| parse line}
-  $configHash.each {|k,v| puts "#{k} => #{v}"}
+def daemon_log(str)
+  msg = "[#{Time.now.strftime("%m/%d/%Y-%H:%M:%S")}] #{str}"
+  $debug ? (puts msg) : ($logFile.puts msg) 
+end
+
+def go
+  defineSigs
+  daemon_log "**************Strating! (#{$$})"
+  readConf
+end
+
+def readConf (sig=false)
+  daemon_log "SIGHUP: rereading conf file" if sig
+  confExt = '.conf'
+  config = File.basename($0)+confExt
+
+  daemon_log "**************Reading Config file: #{config}"
+
+  configFile = File.new(config)
+  configFile.each {|line| parse line}
+  configFile.close
+
+  $configHash.each {|k,v| daemon_log "#{k} => #{v}"}
 end
 
 def parse line
@@ -29,10 +57,10 @@ def parse line
     output = ""
     line.chomp.each_byte do |b|
       case b.chr
-        when '\'','\"'
-          esc ? esc = false : esc = true
-        when '#'
-          comment = true if esc == false
+      when '\'','\"'
+        esc ? esc = false : esc = true
+      when '#'
+        comment = true if esc == false
       end 
       output += b.chr if comment == false
     end
@@ -42,3 +70,23 @@ def parse line
 end
 
 go
+
+def clearLog
+  $logFile.close
+  File.truncate($logName,0)
+  $logFile.reopen("a")
+  daemon_log "SIGINT: logcleared"
+end
+
+def writeSecret
+  daemon_log "SIGUSR1: the secret code is: #{$configHash['secret_code']}"
+end
+
+def die
+  daemon_log "SIGQUIT: quitting"
+  $run = false
+end
+
+while $run do
+  
+end
