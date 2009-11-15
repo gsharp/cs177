@@ -6,87 +6,93 @@
 #  Created by Glen Cuthbertson on 2009-11-06.
 #  Copyright 2009 GLENC.COM. All rights reserved.
 # 
+exit!(0) if fork
+require 'yaml'
 
+#Dir.chdir("/")
+File::umask(0)
 
-#STDIN.reopen("/dev/null")
-#STDOUT.reopen("/dev/null","w")
-#STDERR.reopen("/dev/null","w")
+STDIN.reopen("/dev/null")
+STDOUT.reopen("/dev/null","w")
+STDERR.reopen("/dev/null","w")
 
-$logName = File.basename($0)+'.log'
-$logFile = File.new($logName,"a")
-$run = true
-$configHash = {}
-$debug = true
+def setConstants
+  $configFile = File.basename($0)+'.conf'
+  $configHash = {}
+  $run = true
+  $debug = false
+  $logName = File.basename($0)+'.log'
+  $logFile = File.new($logName,"a")
+end
+
+def daemon_log(str)
+  $logFile.reopen($logName,"a")
+  msg = "[#{Time.now.strftime("%m/%d/%Y-%H:%M:%S")}] #{str}"
+  $debug ? (puts msg) : ($logFile.puts msg)
+  $logFile.close
+end
+
 
 def defineSigs
   Signal.trap("INT")  {clearLog}
   Signal.trap("HUP")  {readConf true}
   Signal.trap("QUIT") {die}
   Signal.trap("USR1") {writeSecret}
-  Signal.trap("USR2") {$debug ? $debug = false : $debug = true}
+  Signal.trap("USR2") {debugMode}
 end
 
-def daemon_log(str)
-  msg = "[#{Time.now.strftime("%m/%d/%Y-%H:%M:%S")}] #{str}"
-  $debug ? (puts msg) : ($logFile.puts msg) 
-end
-
-def go
-  defineSigs
-  daemon_log "**************Strating! (#{$$})"
-  readConf
-end
-
-def readConf (sig=false)
-  daemon_log "SIGHUP: rereading conf file" if sig
-  confExt = '.conf'
-  config = File.basename($0)+confExt
-
-  daemon_log "**************Reading Config file: #{config}"
-
-  configFile = File.new(config)
-  configFile.each {|line| parse line}
-  configFile.close
-
-  $configHash.each {|k,v| daemon_log "#{k} => #{v}"}
-end
-
-def parse line
-  if line.strip.rindex('#') != 0 && line.rindex('=') > 0
-    comment,esc = false,false
-    output = ""
-    line.chomp.each_byte do |b|
-      case b.chr
-      when '\'','\"'
-        esc ? esc = false : esc = true
-      when '#'
-        comment = true if esc == false
-      end 
-      output += b.chr if comment == false
-    end
-    lineArr = output.split('=')
-    $configHash[lineArr[0].strip] = lineArr[1].strip.tr_s('\'','')
+def clearLog
+  begin
+    File.truncate($logName,0)
+    daemon_log "SIGINT: logcleared"    
+  rescue Exception => e
+    deamon_log e
   end
 end
 
-go
+def readConf (sig=false)
+  begin
+    config = File.open($configFile,"r"){|f| $configHash = YAML.load(f)}
+    daemon_log "SIGHUP: re-reading conf file" if sig
+    daemon_log "**************Read Config file: #{$configFile} to Config Hash"
+    daemon_log "**************Config hash contains:"
+    $configHash.each {|k,v| daemon_log "#{k}:#{v}"}
+  rescue
+    daemon_log "cannot file config file: #{configFile}"
+    abort
+  end
+end
 
-def clearLog
-  $logFile.close
-  File.truncate($logName,0)
-  $logFile.reopen("a")
-  daemon_log "SIGINT: logcleared"
+def die
+  daemon_log "SIGQUIT: quitting pid: #{$$}"
+  $run = false
 end
 
 def writeSecret
   daemon_log "SIGUSR1: the secret code is: #{$configHash['secret_code']}"
 end
 
-def die
-  daemon_log "SIGQUIT: quitting"
-  $run = false
+def debugMode
+  daemon_log "SIGUSR2: Toggling debug mode from: #{$debug}"
+  $debug ? $debug = false : $debug = true
 end
 
+def go
+  defineSigs
+  setConstants
+  daemon_log "**************Strating! (#{$$})"
+  daemon_log "working directory: #{Dir.getwd}"
+  readConf
+end
+
+go
+
 while $run do
-  
+  begin
+    daemon_log "I'M AWAKE!!!...going back to sleep for #{$configHash['sleep_time']} seconds"
+    sleep $configHash['sleep_time'].to_i
+  rescue Exception => e
+    daemon_log e
+    die
+  end
 end
