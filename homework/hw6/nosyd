@@ -85,11 +85,31 @@ def go
   readConf
 end
 
+def findJnk
+  dir = Dir.getwd
+  foo = `find #{dir} -type f -iname '*#{$configHash['junk_file_ext']}'`
+  arr =  foo.split("\n")
+  daemon_log "looking for junk files"
+  if arr.length > 0
+    arr.each {|i| deleteFile i} 
+  else
+    daemon_log "no junk files found"
+  end
+  return arr
+end
+
+def deleteFile (path)
+  daemon_log "deleting: #{path}"
+  File.delete(path)
+end
+
 go
 
 while $run do
   begin
-    daemon_log "I'M AWAKE!!!...going back to sleep for #{$configHash['sleep_time']} seconds"
+    daemon_log "I'M AWAKE!!!"
+    findJnk
+    daemon_log "...going back to sleep for #{$configHash['sleep_time']} seconds"
     sleep $configHash['sleep_time'].to_i
   rescue Exception => e
     daemon_log e
