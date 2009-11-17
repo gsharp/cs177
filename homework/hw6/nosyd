@@ -86,21 +86,28 @@ def go
 end
 
 def findJnk
-  dir = Dir.getwd
-  foo = `find #{dir} -type f -iname '*#{$configHash['junk_file_ext']}'`
-  arr =  foo.split("\n")
+  junkFiles = File.join("**", "*#{$configHash['junk_file_ext']}")
+  arr = Dir.glob(junkFiles)
   daemon_log "looking for junk files"
   if arr.length > 0
-    arr.each {|i| deleteFile i} 
+    arr.each {|i| deleteFile i}
   else
     daemon_log "no junk files found"
   end
-  return arr
 end
 
 def deleteFile (path)
   daemon_log "deleting: #{path}"
   File.delete(path)
+end
+
+def checkWorldWrite
+  daemon_log "looking for world writable files"
+  files = File.join("**","*.*")
+  arr = Dir.glob(files)
+  arr.each do |file|
+    daemon_log "#{file} is writable by others" if File.world_writable?(file).to_s.empty? != true
+  end
 end
 
 go
@@ -109,6 +116,7 @@ while $run do
   begin
     daemon_log "I'M AWAKE!!!"
     findJnk
+    checkWorldWrite
     daemon_log "...going back to sleep for #{$configHash['sleep_time']} seconds"
     sleep $configHash['sleep_time'].to_i
   rescue Exception => e
