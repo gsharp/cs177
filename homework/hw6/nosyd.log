@@ -1,0 +1,18 @@
+[11/19/2009-01:46:52 : 29605] SIGINT: logcleared
+[11/19/2009-01:46:59 : 29605] ******** I'M AWAKE!!!!!!!!!!!!!!!!!!!!!
+[11/19/2009-01:46:59 : 29605] ******** looking for junk files
+[11/19/2009-01:46:59 : 29605] => no junk files found
+[11/19/2009-01:46:59 : 29605] ******** looking for world writable files
+[11/19/2009-01:46:59 : 29605] => me :is writable by others
+[11/19/2009-01:46:59 : 29605] => what/cool_man :is writable by others
+[11/19/2009-01:46:59 : 29605] => what/me/word :is writable by others
+[11/19/2009-01:46:59 : 29605] ******** looking for file size matches:
+[11/19/2009-01:46:59 : 29605] files of zero bytes or >= 1kb:
+[11/19/2009-01:46:59 : 29605] => me :is zero bytes
+[11/19/2009-01:46:59 : 29605] => nanod(3kb) >= 1k
+[11/19/2009-01:46:59 : 29605] => nosyd(3kb) >= 1k
+[11/19/2009-01:46:59 : 29605] => what/cool_man :is zero bytes
+[11/19/2009-01:46:59 : 29605] ...going back to sleep for 30 seconds
+[11/19/2009-01:47:08 : 29605] SIGQUIT: quitting pid: 29605
+[11/19/2009-01:47:08 : 29605] exit
+[11/19/2009-01:47:08 : 29605] SIGQUIT: quitting pid: 29605
