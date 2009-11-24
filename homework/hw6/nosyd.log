@@ -1,18 +1,84 @@
-[11/19/2009-01:46:52 : 29605] SIGINT: logcleared
-[11/19/2009-01:46:59 : 29605] ******** I'M AWAKE!!!!!!!!!!!!!!!!!!!!!
-[11/19/2009-01:46:59 : 29605] ******** looking for junk files
-[11/19/2009-01:46:59 : 29605] => no junk files found
-[11/19/2009-01:46:59 : 29605] ******** looking for world writable files
-[11/19/2009-01:46:59 : 29605] => me :is writable by others
-[11/19/2009-01:46:59 : 29605] => what/cool_man :is writable by others
-[11/19/2009-01:46:59 : 29605] => what/me/word :is writable by others
-[11/19/2009-01:46:59 : 29605] ******** looking for file size matches:
-[11/19/2009-01:46:59 : 29605] files of zero bytes or >= 1kb:
-[11/19/2009-01:46:59 : 29605] => me :is zero bytes
-[11/19/2009-01:46:59 : 29605] => nanod(3kb) >= 1k
-[11/19/2009-01:46:59 : 29605] => nosyd(3kb) >= 1k
-[11/19/2009-01:46:59 : 29605] => what/cool_man :is zero bytes
-[11/19/2009-01:46:59 : 29605] ...going back to sleep for 30 seconds
-[11/19/2009-01:47:08 : 29605] SIGQUIT: quitting pid: 29605
-[11/19/2009-01:47:08 : 29605] exit
-[11/19/2009-01:47:08 : 29605] SIGQUIT: quitting pid: 29605
+[11/19/2009-17:16:03 : 31556] SIGINT: logcleared
+[11/19/2009-17:16:07 : 31556] ******** I'M AWAKE!!!!!!!!!!!!!!!!!!!!!
+[11/19/2009-17:16:07 : 31556] ******** looking for junk files
+[11/19/2009-17:16:07 : 31556] => no junk files found
+[11/19/2009-17:16:07 : 31556] ******** looking for world writable files
+[11/19/2009-17:16:07 : 31556] => me :is writable by others
+[11/19/2009-17:16:07 : 31556] => what/cool_man :is writable by others
+[11/19/2009-17:16:07 : 31556] => what/me/word :is writable by others
+[11/19/2009-17:16:07 : 31556] ******** looking for file size matches:
+[11/19/2009-17:16:07 : 31556] files of zero bytes or >= 1kb:
+[11/19/2009-17:16:07 : 31556] => me :is zero bytes
+[11/19/2009-17:16:07 : 31556] => nosyd(3kb) >= 1k
+[11/19/2009-17:16:07 : 31556] => nosyd.working(3kb) >= 1k
+[11/19/2009-17:16:07 : 31556] => what/cool_man :is zero bytes
+[11/19/2009-17:16:07 : 31556] ...going back to sleep for 30 seconds
+[11/19/2009-17:16:14 : 31556] SIGQUIT: quitting pid: 31556
+[11/19/2009-17:16:14 : 31556] exit
+[11/19/2009-17:16:14 : 31556] SIGQUIT: quitting pid: 31556
+[11/19/2009-17:31:11 : 31605] ******** Strating! (31605) ********
+[11/19/2009-17:31:11 : 31605] working directory: /Users/apple/Desktop/cs177/homework/hw6
+[11/19/2009-17:31:11 : 31605] ******** Read Config file: nosyd.conf to Config Hash
+[11/19/2009-17:31:11 : 31605] ******** Config hash contains:
+[11/19/2009-17:31:11 : 31605] secret_code:what_the_seriously?
+[11/19/2009-17:31:11 : 31605] max_file_size:1k
+[11/19/2009-17:31:11 : 31605] junk_file_ext:.jnk
+[11/19/2009-17:31:11 : 31605] sleep_time:30
+[11/19/2009-17:31:11 : 31605] some_test:#
+[11/19/2009-17:31:11 : 31605] ******** I'M AWAKE!!!!!!!!!!!!!!!!!!!!!
+[11/19/2009-17:31:11 : 31605] ******** looking for junk files
+[11/19/2009-17:31:11 : 31605] => deleting: me.jnk
+[11/19/2009-17:31:11 : 31605] ******** looking for world writable files
+[11/19/2009-17:31:11 : 31605] => me :is writable by others
+[11/19/2009-17:31:11 : 31605] => what/cool_man :is writable by others
+[11/19/2009-17:31:11 : 31605] => what/me/word :is writable by others
+[11/19/2009-17:31:11 : 31605] ******** looking for file size matches:
+[11/19/2009-17:31:11 : 31605] files of zero bytes or >= 1kb:
+[11/19/2009-17:31:11 : 31605] => me :is zero bytes
+[11/19/2009-17:31:11 : 31605] => nosyd(5kb) >= 1k
+[11/19/2009-17:31:11 : 31605] => nosyd.log(2kb) >= 1k
+[11/19/2009-17:31:11 : 31605] => nosyd.working(3kb) >= 1k
+[11/19/2009-17:31:11 : 31605] => what/cool_man :is zero bytes
+[11/19/2009-17:31:11 : 31605] ...going back to sleep for 30 seconds
+[11/19/2009-17:31:41 : 31605] ******** I'M AWAKE!!!!!!!!!!!!!!!!!!!!!
+[11/19/2009-17:31:41 : 31605] ******** looking for junk files
+[11/19/2009-17:31:41 : 31605] => no junk files found
+[11/19/2009-17:31:41 : 31605] ******** looking for world writable files
+[11/19/2009-17:31:41 : 31605] => me :is writable by others
+[11/19/2009-17:31:41 : 31605] => what/cool_man :is writable by others
+[11/19/2009-17:31:41 : 31605] => what/me/word :is writable by others
+[11/19/2009-17:31:41 : 31605] ******** looking for file size matches:
+[11/19/2009-17:31:41 : 31605] files of zero bytes or >= 1kb:
+[11/19/2009-17:31:41 : 31605] => me :is zero bytes
+[11/19/2009-17:31:41 : 31605] => nosyd(5kb) >= 1k
+[11/19/2009-17:31:41 : 31605] => nosyd.log(3kb) >= 1k
+[11/19/2009-17:31:41 : 31605] => nosyd.working(3kb) >= 1k
+[11/19/2009-17:31:41 : 31605] => what/cool_man :is zero bytes
+[11/19/2009-17:31:41 : 31605] ...going back to sleep for 30 seconds
+[11/19/2009-17:31:55 : 31605] SIGHUP: re-reading conf file
+[11/19/2009-17:31:55 : 31605] ******** Read Config file: nosyd.conf to Config Hash
+[11/19/2009-17:31:55 : 31605] ******** Config hash contains:
+[11/19/2009-17:31:55 : 31605] secret_code:the_new_secret_code!
+[11/19/2009-17:31:55 : 31605] max_file_size:1k
+[11/19/2009-17:31:55 : 31605] junk_file_ext:.jnk
+[11/19/2009-17:31:55 : 31605] sleep_time:30
+[11/19/2009-17:31:55 : 31605] some_test:#
+[11/19/2009-17:32:09 : 31605] SIGUSR1: the secret code is: the_new_secret_code!
+[11/19/2009-17:32:11 : 31605] ******** I'M AWAKE!!!!!!!!!!!!!!!!!!!!!
+[11/19/2009-17:32:11 : 31605] ******** looking for junk files
+[11/19/2009-17:32:11 : 31605] => no junk files found
+[11/19/2009-17:32:11 : 31605] ******** looking for world writable files
+[11/19/2009-17:32:11 : 31605] => me :is writable by others
+[11/19/2009-17:32:11 : 31605] => what/cool_man :is writable by others
+[11/19/2009-17:32:11 : 31605] => what/me/word :is writable by others
+[11/19/2009-17:32:11 : 31605] ******** looking for file size matches:
+[11/19/2009-17:32:11 : 31605] files of zero bytes or >= 1kb:
+[11/19/2009-17:32:11 : 31605] => me :is zero bytes
+[11/19/2009-17:32:11 : 31605] => nosyd(5kb) >= 1k
+[11/19/2009-17:32:11 : 31605] => nosyd.log(4kb) >= 1k
+[11/19/2009-17:32:11 : 31605] => nosyd.working(3kb) >= 1k
+[11/19/2009-17:32:11 : 31605] => what/cool_man :is zero bytes
+[11/19/2009-17:32:11 : 31605] ...going back to sleep for 30 seconds
+[11/19/2009-17:32:41 : 31605] SIGQUIT: quitting pid: 31605
+[11/19/2009-17:32:41 : 31605] exit
+[11/19/2009-17:32:41 : 31605] SIGQUIT: quitting pid: 31605

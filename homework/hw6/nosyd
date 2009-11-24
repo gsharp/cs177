@@ -2,155 +2,217 @@
 # 
 #  nosyd
 #  homework 6
-#  
+#  - sets up daemon and detatches process from tty
+#    - redirect IO to dev/null
+#    - map sigs to functions
+#    - create child process
+#    - run forever
+#  - runs nosyd tasks
+#    - log all files that are writable by others
+#    - show secret code from conf
+#    - log all files 0 size
+#    - log all files >= max size set in config
+#    - log and delete all files that have junk extension set in config
+#   
 #  Created by Glen Cuthbertson on 2009-11-06.
 #  Copyright 2009 GLENC.COM. All rights reserved.
 # 
 exit!(0) if fork
 require 'yaml'
 
-#Dir.chdir("/")
+Dir.chdir("/")
 File::umask(0)
 
-def go
-  setConstants
-  redirectIo
-  defineSigs
-  daemon_log "******** Strating! (#{$$}) ********"
-  daemon_log "working directory: #{Dir.getwd}"
-  readConf
-end
+#******************************* function() *******************************
+# core Daemon class
+# sets up core daemons functions and maps signals to functions
+class Daemon
 
-def setConstants
-  $configFile = File.basename($0)+'.conf'
-  $configHash = {}
-  $run = true
-  $debug = false
-  $logName = File.basename($0)+'.log'
-  $logFile = File.new($logName,"a")
-end
-
-def redirectIo
-  STDIN.reopen("/dev/null")
-  STDOUT.reopen("/dev/null","w")
-  STDERR.reopen("/dev/null","w")
-end
-
-def defineSigs
-  Signal.trap("INT")  {clearLog}
-  Signal.trap("HUP")  {readConf true}
-  Signal.trap("USR1") {writeSecret}
-  Signal.trap("QUIT") {die}
-end
-
-def daemon_log(str)
-  $logFile.reopen($logName,"a")
-  msg = "[#{Time.now.strftime("%m/%d/%Y-%H:%M:%S")} : #{$$}] #{str}"
-  $debug ? (puts msg) : ($logFile.puts msg)
-  $logFile.close
-end
-
-def clearLog
-  begin
-    File.truncate($logName,0)
-    daemon_log "SIGINT: logcleared"    
-  rescue Exception => e
-    deamon_log e
+  #******************************* initialize() *******************************
+  # sets up constants
+  def initialize
+    @configFile = File.basename($0)+'.conf'
+    @configHash = {}
+    @run = true
+    @debug = false
+    @logName = File.basename($0)+'.log'
+    @logFile = File.new(@logName,"a")
   end
-end
 
-def readConf (sig=false)
-  begin
-    config = File.open($configFile,"r"){|f| $configHash = YAML.load(f)}
-    daemon_log "SIGHUP: re-reading conf file" if sig
-    daemon_log "******** Read Config file: #{$configFile} to Config Hash"
-    daemon_log "******** Config hash contains:"
-    $configHash.each {|k,v| daemon_log "#{k}:#{v}"}
-  rescue
-    daemon_log "cannot file config file: #{configFile}"
-    abort
+  #******************************* redirectIo() *******************************
+  # remaps IO to dev null
+  def redirectIo
+    STDIN.reopen("/dev/null")
+    STDOUT.reopen("/dev/null","w")
+    STDERR.reopen("/dev/null","w")
   end
-end
 
-def writeSecret
-  daemon_log "SIGUSR1: the secret code is: #{$configHash['secret_code']}"
-end
+  #******************************* defineSigs() *******************************
+  # remaps sigs to functions
+  def defineSigs
+    Signal.trap("INT")  {clearLog}
+    Signal.trap("HUP")  {readConf true}
+    Signal.trap("USR1") {writeSecret}
+    Signal.trap("QUIT") {die}
+  end
 
-def die
-  daemon_log "SIGQUIT: quitting pid: #{$$}"
-  $run = false
-  exit(0)
-end
+  #******************************* log(str) *******************************
+  # in  : takes the string to put to log
+  # proc: adds date / pid / string
+  # out : logs proc to logfile
+  def log(str)
+    @logFile.reopen(@logName,"a")
+    msg = "[#{Time.now.strftime("%m/%d/%Y-%H:%M:%S")} : #{$$}] #{str}"
+    @debug ? (puts msg) : (@logFile.puts msg)
+    @logFile.close
+  end
 
-go # done setting up daemon, now to tasks
-
-def doTasks
-  while $run do
+  #******************************* clearLog() *******************************
+  # truncates the log based on SIGINT
+  def clearLog
     begin
-      daemon_log "******** I'M AWAKE!!!!!!!!!!!!!!!!!!!!!"
-      findJnk
-      checkWorldWrite
-      checkSize
-      daemon_log "...going back to sleep for #{$configHash['sleep_time']} seconds"
-      sleep $configHash['sleep_time'].to_i
+      File.truncate(@logName,0)
+      log "SIGINT: logcleared"    
     rescue Exception => e
-      daemon_log e
-      die
+      log e
     end
   end
-end
 
-def findJnk
-  junkFiles = File.join("**", "*#{$configHash['junk_file_ext']}")
-  arr = Dir.glob(junkFiles)
-  daemon_log "******** looking for junk files"
-  if arr.length > 0
-    arr.each {|i| deleteFile i}
-  else
-    daemon_log "=> no junk files found"
-  end
-end
-
-def deleteFile (path)
-  daemon_log "=> deleting: #{path}"
-  File.delete(path)
-end
-
-def checkWorldWrite
-  daemon_log "******** looking for world writable files"
-  files = File.join("**","*")
-  arr = Dir.glob(files)
-  arr.each do |file|
-    daemon_log "=> #{file} :is writable by others" if File.world_writable?(file).to_s.empty? != true
-  end
-end
-
-def checkSize
-  daemon_log "******** looking for file size matches:"
-  files = File.join("**","*")
-  maxSizeArr = $configHash['max_file_size'].gsub(/\s/, '').scan(/^\d*|\D/)
-  maxSize = maxSizeArr.length > 0 ? maxSizeArr[0].to_i : false
-  maxSizeDenom = maxSizeArr.length > 1 ?  maxSizeArr[1] : false
-  if maxSize
-    denom = case maxSizeDenom
-      when "k","K" then [1000,'kb']
-      when "m","M" then [1000000,'mb']
-      when "g","G" then [1000000000,'gb']
-      else [1,'b']
+  #******************************* readConf(sig=false) *******************************
+  # in  : optional signal toggle
+  # proc: reads / re-reads the configfile to the hash constant @configHash
+  def readConf (sig=false)
+    begin
+      config = File.open(@configFile,"r"){|f| @configHash = YAML.load(f)}
+      log "SIGHUP: re-reading conf file" if sig
+      log "******** Read Config file: #{@configFile} to Config Hash"
+      log "******** Config hash contains:"
+      @configHash.each {|k,v| log "#{k}:#{v}"}
+    rescue
+      log "cannot find config file: #{@configFile}, aborting"
+      abort
     end
-    daemon_log "denomination is #{denom}" if $debug == true
-    daemon_log "maxSize value is #{maxSize}" if $debug == true
-    maxBytes = maxSize*denom[0]
-    daemon_log "actual maxBytes is #{maxBytes}" if $debug == true
-    daemon_log "files of zero bytes or >= #{maxSize}#{denom[1]}:"
   end
-  arr = Dir.glob(files)
-  arr.each do |file|
-    daemon_log "=> #{file} :is zero bytes" if File.size(file) == 0
+
+  #******************************* writeSecret() *******************************
+  # writes secret code from configuration file
+  def writeSecret
+    log "SIGUSR1: the secret code is: #{@configHash['secret_code']}"
+  end
+
+  #******************************* die() *******************************
+  # kills daemon
+  def die
+    log "SIGQUIT: quitting pid: #{$$}"
+    @run = false
+    exit(0)
+  end
+  
+  #******************************* start() *******************************
+  # calls functions to setup daemon
+  def start
+    redirectIo
+    defineSigs
+    log "******** Strating! (#{$$}) ********"
+    log "working directory: #{Dir.getwd}"
+    readConf
+  end
+end # NosyDaemon class
+
+#******************************* Class: Nosyd() *******************************
+# in  : sub class of Daemon
+# proc: creates full class set for nosyd
+class Nosyd < Daemon
+
+  #******************************* doTasks() *******************************
+  # core loop that runs when @run is true
+  # sleeps for 30 seconds and re-runs
+  # fires task functions
+  def doTasks
+    while @run do
+      begin
+        log "******** I'M AWAKE!!!!!!!!!!!!!!!!!!!!!"
+        findJnk
+        checkWorldWrite
+        checkSize
+        log "...going back to sleep for #{@configHash['sleep_time']} seconds"
+        sleep @configHash['sleep_time'].to_i
+      rescue Exception => e
+        log e
+        die
+      end
+    end
+  end
+
+  #******************************* findJnk() *******************************
+  # starting from working dir and going recursively
+  # looks for files with matching junk extension set in config
+  # deletes them
+  # writes activity to log
+  def findJnk
+    junkFiles = File.join("**", "*#{@configHash['junk_file_ext']}")
+    arr = Dir.glob(junkFiles)
+    log "******** looking for junk files"
+    if arr.length > 0
+      arr.each {|i| deleteFile i}
+    else
+      log "=> no junk files found"
+    end
+  end
+
+  #******************************* deleteFile(path) *******************************
+  # in: path to file
+  # proc: deletes file in path, writes activity to log
+  def deleteFile (path)
+    log "=> deleting: #{path}"
+    File.delete(path)
+  end
+
+  #******************************* checkWorldWrite() *******************************
+  # checks files recursively from current working dir
+  # logs files which are writable by others
+  def checkWorldWrite
+    log "******** looking for world writable files"
+    files = File.join("**","*")
+    arr = Dir.glob(files)
+    arr.each do |file|
+      log "=> #{file} :is writable by others" if File.world_writable?(file).to_s.empty? != true
+    end
+  end
+
+  #******************************* checkSize() *******************************
+  # checks the size of files recursivly from working directory
+  # logs if files are 0 size or >= max size set in conf
+  def checkSize
+    log "******** looking for file size matches:"
+    files = File.join("**","*")
+    maxSizeArr = @configHash['max_file_size'].gsub(/\s/, '').scan(/^\d*|\D/)
+    maxSize = maxSizeArr.length > 0 ? maxSizeArr[0].to_i : false
+    maxSizeDenom = maxSizeArr.length > 1 ?  maxSizeArr[1] : false
     if maxSize
-      daemon_log "=> #{file}(#{(File.size(file)/denom[0]).round}#{denom[1]}) >= #{$configHash['max_file_size']}" if File.size(file).to_i >= maxBytes.to_i
+      denom = case maxSizeDenom
+        when "k","K" then [1000,'kb']
+        when "m","M" then [1000000,'mb']
+        when "g","G" then [1000000000,'gb']
+        else [1,'b']
+      end
+      log "denomination is #{denom}" if @debug == true
+      log "maxSize value is #{maxSize}" if @debug == true
+      maxBytes = maxSize*denom[0]
+      log "actual maxBytes is #{maxBytes}" if @debug == true
+      log "files of zero bytes or >= #{maxSize}#{denom[1]}:"
     end
-  end  
-end
+    arr = Dir.glob(files)
+    arr.each do |file|
+      log "=> #{file} :is zero bytes" if File.size(file) == 0
+      if maxSize
+        log "=> #{file}(#{(File.size(file)/denom[0]).round}#{denom[1]}) >= #{@configHash['max_file_size']}" if File.size(file).to_i >= maxBytes.to_i
+      end
+    end  
+  end
 
-doTasks
+end # end Nosyd class
+
+nosyd = Nosyd.new
+nosyd.start
+nosyd.doTasks
