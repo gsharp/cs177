@@ -1,0 +1,13 @@
+----------------Abbas system profile for OSX (CS177 Homework 7, by Glen Cuthbertson)--------
+----------------these drivers were executed on a MacBook Pro running OSX Snow Leopard-------
+Memory size:  4 GB
+Number of cpu's on this system: 2 (1 Processor, 2 Cores)
+CPU Vendor: Intel
+CPU model:  Intel Core 2 Duo
+CPU speed:  2.4 GHz
+OS name:  Mac OS X 10.6.2 (10C540), Kernel:  Darwin 10.2.0
+Swap file size: 256M
+Total MAC Addresses (Ethernet / Firewire / Airport):
+          MAC Address: 00:1b:63:9f:8e:be
+          MAC Address: 00:1c:b3:ff:fe:a2:e6:22
+          MAC Address: 00:1c:b3:c3:d0:bf
